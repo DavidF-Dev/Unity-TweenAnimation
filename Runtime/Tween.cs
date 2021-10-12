@@ -242,13 +242,24 @@ namespace DavidFDev.Tweening
         #region Methods
 
         /// <summary>
-        ///     Begin or restart the tween from initial values.
+        ///     Begin or restart the tween.
         /// </summary>
-        public void Start()
+        /// <param name="duration">Optionally change the tween's duration to a new value or, if null, remain the same.</param>
+        public void Start(float? duration = null)
         {
             if (IsActive)
             {
                 Stop();
+            }
+
+            if (duration != null)
+            {
+                if (duration.Value < 0f)
+                {
+                    throw new ArgumentException("Tween cannot have a negative duration", nameof(duration));
+                }
+
+                TotalDuration = duration.Value;
             }
 
             _update = _mono.StartCoroutine(Update());
