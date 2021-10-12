@@ -91,37 +91,37 @@ namespace DavidFDev.Tweening
 
         public static Tween Create(float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
         {
-            return Create(start, end, duration, Mathf.Lerp, easingFunction, begin, onUpdate, onComplete);
+            return Create(start, end, duration, Mathf.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
         public static Tween Create(double start, double end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<double> onUpdate = null, Action onComplete = null)
         {
-            return Create(start, end, duration, (a, b, t) => a + (b - a) * Mathf.Clamp01(t), easingFunction, begin, onUpdate, onComplete);
+            return Create(start, end, duration, (a, b, t) => a + (b - a) * t, easingFunction, begin, onUpdate, onComplete);
         }
 
         public static Tween Create(Vector2 start, Vector2 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector2> onUpdate = null, Action onComplete = null)
         {
-            return Create(start, end, duration, Vector2.Lerp, easingFunction, begin, onUpdate, onComplete);
+            return Create(start, end, duration, Vector2.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
         public static Tween Create(Vector3 start, Vector3 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector3> onUpdate = null, Action onComplete = null)
         {
-            return Create(start, end, duration, Vector3.Lerp, easingFunction, begin, onUpdate, onComplete);
+            return Create(start, end, duration, Vector3.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
         public static Tween Create(Vector4 start, Vector4 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector4> onUpdate = null, Action onComplete = null)
         {
-            return Create(start, end, duration, Vector4.Lerp, easingFunction, begin, onUpdate, onComplete);
+            return Create(start, end, duration, Vector4.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
         public static Tween Create(Quaternion start, Quaternion end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Quaternion> onUpdate = null, Action onComplete = null)
         {
-            return Create(start, end, duration, Quaternion.Lerp, easingFunction, begin, onUpdate, onComplete);
+            return Create(start, end, duration, Quaternion.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
         public static Tween Create(Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
         {
-            return Create(start, end, duration, Color.Lerp, easingFunction, begin, onUpdate, onComplete);
+            return Create(start, end, duration, Color.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
         #endregion
@@ -245,7 +245,7 @@ namespace DavidFDev.Tweening
         }
 
         /// <summary>
-        ///     Get the tweened value at the provided clamped progress percentage.
+        ///     Get the tweened value at the provided progress percentage.
         ///     0.0 - returns StartValue.
         ///     1.0 - returns EndValue.
         /// </summary>
@@ -255,7 +255,7 @@ namespace DavidFDev.Tweening
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object GetTweenedValueAt(float progress)
         {
-            return LerpFunction(StartValue, EndValue, EasingFunction(Mathf.Clamp01(progress)));
+            return LerpFunction(StartValue, EndValue, EasingFunction(progress));
         }
 
         [Pure]
@@ -277,6 +277,9 @@ namespace DavidFDev.Tweening
             IsPaused = false;
             ElapsedTime = 0.0f;
 
+            // Wait until the end of the frame before starting
+            yield return new WaitForEndOfFrame();
+
             // Begin loop
             while (ElapsedTime <= TotalDuration)
             {
@@ -291,11 +294,12 @@ namespace DavidFDev.Tweening
 
                 yield return null;
 
-                // Increment elapsed time (note to self: can this be before yield?)
+                // Increment elapsed time
                 ElapsedTime += Time.deltaTime;
             }
 
             // Snap to the end value
+            ElapsedTime = TotalDuration;
             UpdateCurrentValue(GetTweenedValueAt(1.0f));
 
             // Invoke external completion logic
