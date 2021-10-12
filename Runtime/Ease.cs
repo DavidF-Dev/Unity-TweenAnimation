@@ -15,8 +15,8 @@ namespace DavidFDev.Tweening
     /// <summary>
     ///     Easing function used by a lerping function.
     /// </summary>
-    /// <param name="t">Progress (0.0 - 1.0).</param>
-    /// <returns>Manipulated progress (0.0 - 1.0).</returns>
+    /// <param name="t">Progress (typically 0.0 - 1.0).</param>
+    /// <returns>Manipulated progress (typically 0.0 - 1.0).</returns>
     public delegate float EasingFunction(float t);
 
     /// <summary>
