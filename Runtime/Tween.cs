@@ -399,6 +399,4 @@ namespace DavidFDev.Tweening
 
         #endregion
     }
-
-
 }
