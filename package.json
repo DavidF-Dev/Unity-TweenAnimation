@@ -2,7 +2,7 @@
 	"name": "com.davidfdev.tweening",
 	"version": "0.1.1-alpha",
 	"displayName": "Tweening Animations by DavidFDev",
-	"description": "",
+	"description": "An easy solution for complex tweening animations",
 	"unity": "2019.1",
 	"hideInEditor": true,
 	"documentationUrl": "https://github.com/DavidF-Dev/Unity-TweenAnimation/blob/main/DOCUMENTATION.md",
