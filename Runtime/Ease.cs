@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-namespace DavidFDev.Tween
+namespace DavidFDev.Tweening
 {
     public delegate float EasingFunction(float t);
 

@@ -5,7 +5,7 @@
 using System;
 using UnityEngine;
 
-namespace DavidFDev.Tween
+namespace DavidFDev.Tweening
 {
     public static class TweenExtensions
     {

@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-namespace DavidFDev.Tween
+namespace DavidFDev.Tweening
 {
     public delegate T LerpFunction<T>(T a, T b, float t);
 
