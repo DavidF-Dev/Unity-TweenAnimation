@@ -1,15 +1,29 @@
 // File: Tween.cs
-// Purpose: Various static tweening methods and modifiable tween instance
+// Purpose: Various static tweening methods and a tween instance
 // Created by: DavidFDev
 
 using System;
 using System.Collections;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace DavidFDev.Tweening
 {
+    /// <summary>
+    ///     Lerping function.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="t">Progress (0.0 - 1.0).</param>
+    /// <returns>Value between a and b.</returns>
     public delegate T LerpFunction<T>(T a, T b, float t);
 
+    /// <summary>
+    ///     Static Create() methods for constructing tween animation instances.
+    ///     Use Start() and Stop() on an instance to control playback.
+    /// </summary>
     public sealed class Tween
     {
         #region Static fields and constants
@@ -25,6 +39,7 @@ namespace DavidFDev.Tweening
         private static void Init()
 #pragma warning restore IDE0051
         {
+            // Create a game object that can be used to start coroutine(s) later
             _mono = new GameObject("Tween").AddComponent<TweenMono>();
             _mono.gameObject.hideFlags = HideFlags.HideInHierarchy;
             _mono.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
@@ -35,7 +50,7 @@ namespace DavidFDev.Tweening
 
         #region Static methods
 
-        public static Tween Create<T>(T start, T end, float duration, LerpFunction<T> lerpFunction, EasingFunction easingFunction, bool begin = true, Action<T> onUpdate = null, Action onComplete = null)
+        public static Tween Create<T>(T start, T end, float duration, LerpFunction<T> lerpFunction, EasingFunction easingFunction = null, bool begin = true, Action<T> onUpdate = null, Action onComplete = null)
         {
             if (duration < 0f)
             {
@@ -47,11 +62,13 @@ namespace DavidFDev.Tweening
                 throw new ArgumentNullException(nameof(lerpFunction));
             }
 
+            // Use a linear easing function if none is specified
             if (easingFunction == null)
             {
-                throw new ArgumentNullException(nameof(easingFunction));
+                easingFunction = Ease.Linear;
             }
 
+            // Initialise a new tween instance
             Tween tween = new Tween
             {
                 StartValue = start,
@@ -59,6 +76,7 @@ namespace DavidFDev.Tweening
                 TotalDuration = duration,
                 LerpFunction = (a, b, t) => lerpFunction((T)a, (T)b, t),
                 EasingFunction = easingFunction,
+                UnderlyingType = typeof(T),
                 _onUpdate = x => onUpdate((T)x),
                 _onComplete = onComplete
             };
@@ -71,37 +89,37 @@ namespace DavidFDev.Tweening
             return tween;
         }
 
-        public static Tween Create(float start, float end, float duration, EasingFunction easingFunction, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        public static Tween Create(float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Mathf.Lerp, easingFunction, begin, onUpdate, onComplete);
         }
 
-        public static Tween Create(double start, double end, float duration, EasingFunction easingFunction, bool begin = true, Action<double> onUpdate = null, Action onComplete = null)
+        public static Tween Create(double start, double end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<double> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, (a, b, t) => a + (b - a) * Mathf.Clamp01(t), easingFunction, begin, onUpdate, onComplete);
         }
 
-        public static Tween Create(Vector2 start, Vector2 end, float duration, EasingFunction easingFunction, bool begin = true, Action<Vector2> onUpdate = null, Action onComplete = null)
+        public static Tween Create(Vector2 start, Vector2 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector2> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Vector2.Lerp, easingFunction, begin, onUpdate, onComplete);
         }
 
-        public static Tween Create(Vector3 start, Vector3 end, float duration, EasingFunction easingFunction, bool begin = true, Action<Vector3> onUpdate = null, Action onComplete = null)
+        public static Tween Create(Vector3 start, Vector3 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector3> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Vector3.Lerp, easingFunction, begin, onUpdate, onComplete);
         }
 
-        public static Tween Create(Vector4 start, Vector4 end, float duration, EasingFunction easingFunction, bool begin = true, Action<Vector4> onUpdate = null, Action onComplete = null)
+        public static Tween Create(Vector4 start, Vector4 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector4> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Vector4.Lerp, easingFunction, begin, onUpdate, onComplete);
         }
 
-        public static Tween Create(Quaternion start, Quaternion end, float duration, EasingFunction easingFunction, bool begin = true, Action<Quaternion> onUpdate = null, Action onComplete = null)
+        public static Tween Create(Quaternion start, Quaternion end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Quaternion> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Quaternion.Lerp, easingFunction, begin, onUpdate, onComplete);
         }
 
-        public static Tween Create(Color start, Color end, float duration, EasingFunction easingFunction, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
+        public static Tween Create(Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Color.Lerp, easingFunction, begin, onUpdate, onComplete);
         }
@@ -128,23 +146,55 @@ namespace DavidFDev.Tweening
 
         #region Properties
 
-        public bool IsRunning { get; private set; } = false;
+        /// <summary>
+        ///     Whether the tween is actively being updated. Set via Start() and Stop().
+        /// </summary>
+        public bool IsActive { get; private set; } = false;
 
+        /// <summary>
+        ///     Whether the tween animation is paused.
+        /// </summary>
         public bool IsPaused { get; set; } = false;
 
+        /// <summary>
+        ///     The starting value of the tween (0.0).
+        /// </summary>
         public object StartValue { get; private set; } = null;
 
+        /// <summary>
+        ///     The destination value of the tween (1.0).
+        /// </summary>
         public object EndValue { get; private set; } = null;
 
+        /// <summary>
+        ///     The current value of the tween.
+        /// </summary>
         public object CurrentValue { get; private set; } = null;
 
+        /// <summary>
+        ///     Time that the tween animation takes (seconds).
+        /// </summary>
         public float TotalDuration { get; private set; } = 0.0f;
 
+        /// <summary>
+        ///     Elapsed time of the tween animation (0.0 - TotalDuration).
+        /// </summary>
         public float ElapsedTime { get; private set; } = 0.0f;
 
+        /// <summary>
+        ///     Lerp function being used by the tween animation.
+        /// </summary>
         public LerpFunction<object> LerpFunction { get; private set; } = null;
 
+        /// <summary>
+        ///     Easing function being used by the tween animation.
+        /// </summary>
         public EasingFunction EasingFunction { get; private set; } = null;
+
+        /// <summary>
+        ///     Type of the value that is being tweened.
+        /// </summary>
+        public Type UnderlyingType { get; private set; } = null;
 
         #endregion
 
@@ -155,7 +205,7 @@ namespace DavidFDev.Tweening
         /// </summary>
         public void Start()
         {
-            if (IsRunning)
+            if (IsActive)
             {
                 Stop();
             }
@@ -166,16 +216,17 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     End the tween prematurely.
         /// </summary>
-        /// <param name="invokeOnComplete"></param>
+        /// <param name="invokeOnComplete">Whether external completion logic should be invoked.</param>
         public void Stop(bool invokeOnComplete = false)
         {
-            if (!IsRunning)
+            if (!IsActive)
             {
                 return;
             }
 
+            // Forcefully stop the coroutine
             _mono.StopCoroutine(_update);
-            IsRunning = false;
+            IsActive = false;
 
             if (invokeOnComplete)
             {
@@ -187,40 +238,73 @@ namespace DavidFDev.Tweening
         ///     Get the percentage of the tween's completion (0.0 - 1.0).
         /// </summary>
         /// <returns></returns>
+        [Pure]
         public float GetProgress()
         {
             return ElapsedTime / TotalDuration;
         }
 
+        /// <summary>
+        ///     Get the tweened value at the provided clamped progress percentage.
+        ///     0.0 - returns StartValue.
+        ///     1.0 - returns EndValue.
+        /// </summary>
+        /// <param name="progress">Progress between 0.0 and 1.0.</param>
+        /// <returns></returns>
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public object GetTweenedValueAt(float progress)
+        {
+            return LerpFunction(StartValue, EndValue, EasingFunction(Mathf.Clamp01(progress)));
+        }
+
+        [Pure]
+        public override string ToString()
+        {
+            return $"{StartValue} -> {EndValue} over {TotalDuration} seconds{(IsActive ? $" (${GetProgress()*100}%: {CurrentValue}){(IsPaused ? " [Paused]" : "")}" : "")}";
+        }
+
+        /// <summary>
+        ///     Coroutine that updates the tweening animation.
+        ///     Started in Start().
+        ///     Forcefully ended in Stop().
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator Update()
         {
             // Initialise
-            IsRunning = true;
+            IsActive = true;
             IsPaused = false;
             ElapsedTime = 0.0f;
 
             // Begin loop
             while (ElapsedTime <= TotalDuration)
             {
+                // Pause if paused (duh!)
                 while (IsPaused)
                 {
                     yield return null;
                 }
 
-                UpdateCurrentValue(LerpFunction(StartValue, EndValue, EasingFunction(ElapsedTime / TotalDuration)));
-                ElapsedTime += Time.deltaTime;
+                // Perform the tween
+                UpdateCurrentValue(GetTweenedValueAt(ElapsedTime / TotalDuration));
+
                 yield return null;
+
+                // Increment elapsed time (note to self: can this be before yield?)
+                ElapsedTime += Time.deltaTime;
             }
 
             // Snap to the end value
-            UpdateCurrentValue(LerpFunction(StartValue, EndValue, 1.0f));
+            UpdateCurrentValue(GetTweenedValueAt(1.0f));
 
             // Invoke external completion logic
             UpdateOnComplete();
 
-            IsRunning = false;
+            IsActive = false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateCurrentValue(object value)
         {
             CurrentValue = value;
@@ -236,6 +320,7 @@ namespace DavidFDev.Tweening
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateOnComplete()
         {
             try
