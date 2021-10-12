@@ -12,6 +12,10 @@ namespace DavidFDev.Tweening
     /// </summary>
     public static class TweenExtensions
     {
+        /// <summary>
+        ///     Create a new instance that tweens the world x position of an object's transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
         public static Tween TweenX(this Transform transform, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
         {
             return Tween.Create(start, end, duration, easingFunction, begin, x =>
@@ -21,6 +25,10 @@ namespace DavidFDev.Tweening
             }, onComplete);
         }
 
+        /// <summary>
+        ///     Create a new instance that tweens the world y position of an object's transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
         public static Tween TweenY(this Transform transform, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
         {
             return Tween.Create(start, end, duration, easingFunction, begin, y =>

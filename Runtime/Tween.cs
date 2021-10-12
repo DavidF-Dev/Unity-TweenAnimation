@@ -50,6 +50,19 @@ namespace DavidFDev.Tweening
 
         #region Static methods
 
+        /// <summary>
+        ///     Create a new tweening instance for a specified lerpable type.
+        /// </summary>
+        /// <typeparam name="T">Lerpable type.</typeparam>
+        /// <param name="start">Starting value (0%).</param>
+        /// <param name="end">Destination value (100%).</param>
+        /// <param name="duration">Time that the tweening animation should take (seconds).</param>
+        /// <param name="lerpFunction">Lerping function to use.</param>
+        /// <param name="easingFunction">Easing function to use.</param>
+        /// <param name="begin">Whether to begin the animation straight away or wait for Start() to be called on the instance.</param>
+        /// <param name="onUpdate">Invoked when the tweened value is updated, providing the current value.</param>
+        /// <param name="onComplete">Invoked when the tween is completed.</param>
+        /// <returns>Tweening instance that can be used to control playback.</returns>
         public static Tween Create<T>(T start, T end, float duration, LerpFunction<T> lerpFunction, EasingFunction easingFunction = null, bool begin = true, Action<T> onUpdate = null, Action onComplete = null)
         {
             if (duration < 0f)
@@ -89,36 +102,64 @@ namespace DavidFDev.Tweening
             return tween;
         }
 
+        /// <summary>
+        ///     Create a new instance that tweens floats.
+        /// </summary>
+        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
         public static Tween Create(float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Mathf.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
+        /// <summary>
+        ///     Create a new instance that tweens doubles.
+        /// </summary>
+        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
         public static Tween Create(double start, double end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<double> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, (a, b, t) => a + (b - a) * t, easingFunction, begin, onUpdate, onComplete);
         }
 
+        /// <summary>
+        ///     Create a new instance that tweens 2d vectors.
+        /// </summary>
+        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
         public static Tween Create(Vector2 start, Vector2 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector2> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Vector2.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
+        /// <summary>
+        ///     Create a new instance that tweens 3d vectors.
+        /// </summary>
+        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
         public static Tween Create(Vector3 start, Vector3 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector3> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Vector3.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
+        /// <summary>
+        ///     Create a new instance that tweens 4d vectors.
+        /// </summary>
+        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
         public static Tween Create(Vector4 start, Vector4 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector4> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Vector4.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
+        /// <summary>
+        ///     Create a new instance that tweens quaternions.
+        /// </summary>
+        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
         public static Tween Create(Quaternion start, Quaternion end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Quaternion> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Quaternion.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
 
+        /// <summary>
+        ///     Create a new instance that tweens colours.
+        /// </summary>
+        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
         public static Tween Create(Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Color.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
@@ -157,17 +198,17 @@ namespace DavidFDev.Tweening
         public bool IsPaused { get; set; } = false;
 
         /// <summary>
-        ///     The starting value of the tween (0.0).
+        ///     Starting value of the tween (0%).
         /// </summary>
         public object StartValue { get; private set; } = null;
 
         /// <summary>
-        ///     The destination value of the tween (1.0).
+        ///     Destination value of the tween (100%).
         /// </summary>
         public object EndValue { get; private set; } = null;
 
         /// <summary>
-        ///     The current value of the tween.
+        ///     Current value of the tween.
         /// </summary>
         public object CurrentValue { get; private set; } = null;
 
