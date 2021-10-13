@@ -4,6 +4,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DavidFDev.Tweening
 {
@@ -367,7 +368,7 @@ namespace DavidFDev.Tweening
         ///     Create a new instance that tweens the colour of a sprite renderer.
         /// </summary>
         /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween TweenColourRGB(this SpriteRenderer renderer, Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
+        public static Tween TweenColour(this SpriteRenderer renderer, Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
         {
             return Tween.Create(start, end, duration, easingFunction, begin, c =>
             {
@@ -424,6 +425,71 @@ namespace DavidFDev.Tweening
             return Tween.Create(start, end, duration, easingFunction, begin, a =>
             {
                 renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, a);
+                onUpdate?.Invoke(a);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the colour of a graphic.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenColour(this Graphic graphic, Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, c =>
+            {
+                graphic.color = c;
+                onUpdate?.Invoke(c);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the red component of a graphic's colour.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenRed(this Graphic graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, r =>
+            {
+                graphic.color = new Color(r, graphic.color.g, graphic.color.b, graphic.color.a);
+                onUpdate?.Invoke(r);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the green component of a graphic's colour.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenGreen(this Graphic graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, g =>
+            {
+                graphic.color = new Color(graphic.color.r, g, graphic.color.b, graphic.color.a);
+                onUpdate?.Invoke(g);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the blue component of a graphic's colour.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenBlue(this Graphic graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, b =>
+            {
+                graphic.color = new Color(graphic.color.r, graphic.color.g, b, graphic.color.a);
+                onUpdate?.Invoke(b);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the alpha component of a graphic's colour.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenAlpha(this Graphic graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, a =>
+            {
+                graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, a);
                 onUpdate?.Invoke(a);
             }, onComplete);
         }
