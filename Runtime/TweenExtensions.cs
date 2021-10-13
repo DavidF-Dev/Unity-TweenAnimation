@@ -512,7 +512,7 @@ namespace DavidFDev.Tweening
         ///     Create a new instance that tweens the colour of a graphic.
         /// </summary>
         /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween TweenColour(this Graphic graphic, Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
+        public static Tween TweenColour<T>(this T graphic, Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null) where T : Graphic
         {
             return Tween.Create(start, end, duration, easingFunction, begin, c =>
             {
@@ -525,7 +525,7 @@ namespace DavidFDev.Tweening
         ///     Create a new instance that tweens the red component of a graphic's colour.
         /// </summary>
         /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween TweenRed(this Graphic graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        public static Tween TweenRed<T>(this T graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null) where T : Graphic
         {
             return Tween.Create(start, end, duration, easingFunction, begin, r =>
             {
@@ -538,7 +538,7 @@ namespace DavidFDev.Tweening
         ///     Create a new instance that tweens the green component of a graphic's colour.
         /// </summary>
         /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween TweenGreen(this Graphic graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        public static Tween TweenGreen<T>(this T graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null) where T : Graphic
         {
             return Tween.Create(start, end, duration, easingFunction, begin, g =>
             {
@@ -551,7 +551,7 @@ namespace DavidFDev.Tweening
         ///     Create a new instance that tweens the blue component of a graphic's colour.
         /// </summary>
         /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween TweenBlue(this Graphic graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        public static Tween TweenBlue<T>(this T graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null) where T : Graphic
         {
             return Tween.Create(start, end, duration, easingFunction, begin, b =>
             {
@@ -564,7 +564,7 @@ namespace DavidFDev.Tweening
         ///     Create a new instance that tweens the alpha component of a graphic's colour.
         /// </summary>
         /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween TweenAlpha(this Graphic graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        public static Tween TweenAlpha<T>(this T graphic, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null) where T : Graphic
         {
             return Tween.Create(start, end, duration, easingFunction, begin, a =>
             {
@@ -639,6 +639,62 @@ namespace DavidFDev.Tweening
             {
                 audioSource.time = t;
                 onUpdate?.Invoke(t);
+            }, onComplete);
+        }
+
+        #endregion
+
+        #region Light
+
+        /// <summary>
+        ///     Create a new instance that tweens the intensity of a light.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenIntensity(this Light light, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, i =>
+            {
+                light.intensity = i;
+                onUpdate?.Invoke(i);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the range of a light.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenRange(this Light light, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, r =>
+            {
+                light.range = r;
+                onUpdate?.Invoke(r);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the spot angle of a light.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenSpotAngle(this Light light, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, a =>
+            {
+                light.spotAngle = a;
+                onUpdate?.Invoke(a);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the colour of a light.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenColour(this Light light, Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, c =>
+            {
+                light.color = c;
+                onUpdate?.Invoke(c);
             }, onComplete);
         }
 
