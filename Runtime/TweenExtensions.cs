@@ -699,5 +699,35 @@ namespace DavidFDev.Tweening
         }
 
         #endregion
+
+        #region Camera
+
+        /// <summary>
+        ///     Create a new instance that tweens the field of view of a camera.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenFieldOfView(this Camera camera, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, fov =>
+            {
+                camera.fieldOfView = fov;
+                onUpdate?.Invoke(fov);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the orthographic size of a camera.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenOrthographicSize(this Camera camera, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, s =>
+            {
+                camera.orthographicSize = s;
+                onUpdate?.Invoke(s);
+            }, onComplete);
+        }
+
+        #endregion
     }
 }
