@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -58,8 +59,8 @@ namespace DavidFDev.Tweening
         /// <param name="end">Destination value (100%).</param>
         /// <param name="duration">Time that the tweening animation should take (seconds).</param>
         /// <param name="lerpFunction">Lerping function to use.</param>
-        /// <param name="easingFunction">Easing function to use.</param>
-        /// <param name="begin">Whether to begin the animation straight away or wait for Start() to be called on the instance.</param>
+        /// <param name="easingFunction">Easing function to use (defaults to Ease.Linear).</param>
+        /// <param name="begin">Whether to begin the animation straight away or wait for Start() to be called on the instance (defaults to true).</param>
         /// <param name="onUpdate">Invoked when the tweened value is updated, providing the current value.</param>
         /// <param name="onComplete">Invoked when the tween is completed.</param>
         /// <returns>Tweening instance that can be used to control playback.</returns>
@@ -163,6 +164,46 @@ namespace DavidFDev.Tweening
         public static Tween Create(Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
         {
             return Create(start, end, duration, Color.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens an object's property (advanced).
+        /// </summary>
+        /// <param name="target">Reference to the target object that the property is declared on.</param>
+        /// <param name="propertyName">Name of the property (recommend using nameof()).</param>
+        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween Create<T>(object target, string propertyName, T start, T end, float duration, LerpFunction<T> lerpFunction, EasingFunction easingFunction = null, bool begin = true, Action<T> onUpdate = null, Action onComplete = null)
+        {
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                throw new ArgumentNullException(nameof(propertyName));
+            }
+
+            // Find the property on the target object by name
+            PropertyInfo property = target.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+            // Check that the property is found
+            if (property == null)
+            {
+                throw new NullReferenceException($"Cannot find property ({propertyName}) on object ({target.GetType().Name}).");
+            }
+
+            // Ensure that the property type matches the provided generic type
+            if (property.PropertyType != typeof(T))
+            {
+                throw new InvalidCastException($"Cannot cast property ({propertyName}) to tween type ({typeof(T).Name}).");
+            }
+
+            return Create(start, end, duration, lerpFunction, easingFunction, begin, x =>
+            {
+                property.SetValue(target, x);
+                onUpdate?.Invoke(x);
+            }, onComplete);
         }
 
         #endregion
