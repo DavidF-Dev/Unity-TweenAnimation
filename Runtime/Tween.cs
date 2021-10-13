@@ -194,9 +194,9 @@ namespace DavidFDev.Tweening
             }
 
             // Ensure that the property type matches the provided generic type
-            if (property.PropertyType != typeof(T))
+            if (typeof(T) != property.PropertyType)
             {
-                throw new InvalidCastException($"Cannot cast property ({propertyName}) to tween type ({typeof(T).Name}).");
+                throw new InvalidCastException($"Cannot cast property type ({property.PropertyType.Name}) to tween type ({typeof(T).Name}).");
             }
 
             return Create(start, end, duration, lerpFunction, easingFunction, begin, x =>
