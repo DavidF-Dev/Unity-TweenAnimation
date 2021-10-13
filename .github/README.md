@@ -94,6 +94,7 @@ transform.TweenX(
 This call uses one of the built-in extension methods that tween's an object's x position 10 units to the right over (t = 4) seconds. The remainder of the arguments are omitted as they are using default values. This means the easing function will default to ``Ease.Linear``.
 </br></br>
 ```cs
+SpriteRenderer renderer = GetComponent<SpriteRenderer>();
 Tween.Create<Color>(
   start: Color.white,
   end: Color.green,
@@ -101,10 +102,23 @@ Tween.Create<Color>(
   lerpFunction: Color.LerpUnclamped,
   easingFunction: Ease.Spike,
   begin: true,
-  onUpdate: x => spriteRenderer.color = x,
-  onComplete: () => spriteRenderer.enabled = false);
+  onUpdate: x => renderer.color = x,
+  onComplete: () => renderer.enabled = false);
 ```
 This example shows how to create a generic tweening animation (note that this example is arbitrary as there is already a built-in overload for colours). The method signature is almost identical to the previous examples, however there is a new required parameter: ``lerpFunction``. This of the delegate type, ``LerpFunction`` - and allows you to create custom lerpable tweening types.
+</br></br>
+```cs
+Light light = GetComponent<Light>();
+Tween.Create<float>(
+  target: light,
+  propertyName: nameof(light.intensity),
+  start: 1f,
+  end: 0f,
+  duration: 10f,
+  lerpFunction: Mathf.LerpUnclamped,
+  easingFunction: Ease.CubicInOut);
+```
+This call uses an advanced overload for tweening a property on an object reference. The ``target`` parameter is an object reference and ``propertyName`` is the name of a declared property on the target type. This example will begin tweening a light's intensity from (A = 1) to (B = 0) over (t = 10) seconds using a cubic easing function (note that an equivalent extension method already exists: ``light.TweenIntensity()``.)
 
 ## Contact
 If you have any questions or would like to get in contact, shoot me an email at contact@davidfdev.com. Alternatively, you can send me a direct message on Twitter at [@DavidF_Dev](https://twitter.com/DavidF_Dev).</br></br>
