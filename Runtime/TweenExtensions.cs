@@ -21,7 +21,7 @@ namespace DavidFDev.Tweening
             return Tween.Create(start, end, duration, easingFunction, begin, x =>
             {
                 transform.position = new Vector3(x, transform.position.y, transform.position.z);
-                onUpdate(x);
+                onUpdate?.Invoke(x);
             }, onComplete);
         }
 
