@@ -297,5 +297,70 @@ namespace DavidFDev.Tweening
                 onUpdate?.Invoke(z);
             }, onComplete);
         }
+
+        /// <summary>
+        ///     Create a new instance that tweens the scale of an object's transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenScale(this Transform transform, Vector2 start, Vector2 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector2> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, v =>
+            {
+                transform.localScale = new Vector3(v.x, v.y, transform.localScale.z);
+                onUpdate?.Invoke(v);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the scale of an object's transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenScale(this Transform transform, Vector3 start, Vector3 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector3> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, v =>
+            {
+                transform.localScale = v;
+                onUpdate?.Invoke(v);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the x scale of an object's transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenScaleX(this Transform transform, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, x =>
+            {
+                transform.localScale = new Vector3(x, transform.localScale.y, transform.localScale.z);
+                onUpdate?.Invoke(x);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the y scale of an object's transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenScaleY(this Transform transform, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, y =>
+            {
+                transform.eulerAngles = new Vector3(transform.localScale.x, y, transform.localScale.z);
+                onUpdate?.Invoke(y);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the z scale of an object's transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenScaleZ(this Transform transform, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, z =>
+            {
+                transform.eulerAngles = new Vector3(transform.localScale.x, transform.localScale.y, z);
+                onUpdate?.Invoke(z);
+            }, onComplete);
+        }
     }
 }
