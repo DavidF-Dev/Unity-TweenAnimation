@@ -362,5 +362,70 @@ namespace DavidFDev.Tweening
                 onUpdate?.Invoke(z);
             }, onComplete);
         }
+
+        /// <summary>
+        ///     Create a new instance that tweens the colour of a sprite renderer.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenColourRGB(this SpriteRenderer renderer, Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, c =>
+            {
+                renderer.color = c;
+                onUpdate?.Invoke(c);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the red component of a sprite renderer's colour.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenRed(this SpriteRenderer renderer, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, r =>
+            {
+                renderer.color = new Color(r, renderer.color.g, renderer.color.b, renderer.color.a);
+                onUpdate?.Invoke(r);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the green component of a sprite renderer's colour.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenGreen(this SpriteRenderer renderer, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, g =>
+            {
+                renderer.color = new Color(renderer.color.r, g, renderer.color.b, renderer.color.a);
+                onUpdate?.Invoke(g);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the blue component of a sprite renderer's colour.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenBlue(this SpriteRenderer renderer, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, b =>
+            {
+                renderer.color = new Color(renderer.color.r, renderer.color.g, b, renderer.color.a);
+                onUpdate?.Invoke(b);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the alpha component of a sprite renderer's colour.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenAlpha(this SpriteRenderer renderer, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, a =>
+            {
+                renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, a);
+                onUpdate?.Invoke(a);
+            }, onComplete);
+        }
     }
 }
