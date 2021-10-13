@@ -13,6 +13,8 @@ namespace DavidFDev.Tweening
     /// </summary>
     public static class TweenExtensions
     {
+        #region Transform
+
         /// <summary>
         ///     Create a new instance that tweens the world position of an object's transform.
         /// </summary>
@@ -364,6 +366,10 @@ namespace DavidFDev.Tweening
             }, onComplete);
         }
 
+        #endregion
+
+        #region RectTransform
+
         /// <summary>
         ///     Create a new instance that tweens the anchored position of an object's rect transform.
         /// </summary>
@@ -428,6 +434,10 @@ namespace DavidFDev.Tweening
                 onUpdate?.Invoke(y);
             }, onComplete);
         }
+
+        #endregion
+
+        #region SpriteRenderer
 
         /// <summary>
         ///     Create a new instance that tweens the colour of a sprite renderer.
@@ -494,6 +504,10 @@ namespace DavidFDev.Tweening
             }, onComplete);
         }
 
+        #endregion
+
+        #region Graphic
+
         /// <summary>
         ///     Create a new instance that tweens the colour of a graphic.
         /// </summary>
@@ -558,5 +572,76 @@ namespace DavidFDev.Tweening
                 onUpdate?.Invoke(a);
             }, onComplete);
         }
+
+        #endregion
+
+        #region AudioSource
+
+        /// <summary>
+        ///     Create a new instance that tweens the volume of an audio source.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenVolume(this AudioSource audioSource, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, v =>
+            {
+                audioSource.volume = v;
+                onUpdate?.Invoke(v);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the pitch of an audio source.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenPitch(this AudioSource audioSource, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, p =>
+            {
+                audioSource.pitch = p;
+                onUpdate?.Invoke(p);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the spatial blend of an audio source.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenSpatialBlend(this AudioSource audioSource, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, b =>
+            {
+                audioSource.spatialBlend = b;
+                onUpdate?.Invoke(b);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the stereo pan of an audio source.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenPanStereo(this AudioSource audioSource, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, p =>
+            {
+                audioSource.panStereo = p;
+                onUpdate?.Invoke(p);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the playback time of an audio source.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenTime(this AudioSource audioSource, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, t =>
+            {
+                audioSource.time = t;
+                onUpdate?.Invoke(t);
+            }, onComplete);
+        }
+
+        #endregion
     }
 }
