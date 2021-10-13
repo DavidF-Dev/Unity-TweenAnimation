@@ -365,6 +365,71 @@ namespace DavidFDev.Tweening
         }
 
         /// <summary>
+        ///     Create a new instance that tweens the anchored position of an object's rect transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenAnchoredPosition(this RectTransform transform, Vector2 start, Vector2 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector2> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, v =>
+            {
+                transform.anchoredPosition = v;
+                onUpdate?.Invoke(v);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the 3d anchored position of an object's rect transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenAnchoredPosition3D(this RectTransform transform, Vector3 start, Vector3 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector3> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, v =>
+            {
+                transform.anchoredPosition3D = v;
+                onUpdate?.Invoke(v);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the size delta of an object's rect transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenSizeDelta(this RectTransform transform, Vector2 start, Vector2 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector2> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, v =>
+            {
+                transform.sizeDelta = v;
+                onUpdate?.Invoke(v);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the size delta x component of an object's rect transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenSizeDeltaX(this RectTransform transform, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, x =>
+            {
+                transform.sizeDelta = new Vector2(x, transform.sizeDelta.y);
+                onUpdate?.Invoke(x);
+            }, onComplete);
+        }
+
+        /// <summary>
+        ///     Create a new instance that tweens the size delta y component of an object's rect transform.
+        /// </summary>
+        /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
+        public static Tween TweenSizeDeltaY(this RectTransform transform, float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        {
+            return Tween.Create(start, end, duration, easingFunction, begin, y =>
+            {
+                transform.sizeDelta = new Vector2(transform.sizeDelta.x, y);
+                onUpdate?.Invoke(y);
+            }, onComplete);
+        }
+
+        /// <summary>
         ///     Create a new instance that tweens the colour of a sprite renderer.
         /// </summary>
         /// <inheritdoc cref="Tween.Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
