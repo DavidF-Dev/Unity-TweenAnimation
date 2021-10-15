@@ -91,7 +91,7 @@ namespace DavidFDev.Tweening
                 LerpFunction = (a, b, t) => lerpFunction((T)a, (T)b, t),
                 EasingFunction = easingFunction,
                 UnderlyingType = typeof(T),
-                _onUpdate = x => onUpdate((T)x),
+                _onUpdate = x => onUpdate?.Invoke((T)x),
                 _onComplete = onComplete
             };
 
@@ -369,6 +369,7 @@ namespace DavidFDev.Tweening
             IsActive = true;
             IsPaused = false;
             ElapsedTime = 0.0f;
+            CurrentValue = default;
 
             // Wait until the end of the frame before starting
             yield return new WaitForEndOfFrame();
