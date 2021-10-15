@@ -354,7 +354,7 @@ namespace DavidFDev.Tweening
         [Pure]
         public override string ToString()
         {
-            return $"{StartValue} -> {EndValue} over {TotalDuration} seconds{(IsActive ? $" (${GetProgress()*100:0.0}%: {CurrentValue}){(IsPaused ? " [Paused]" : "")}" : "")}";
+            return $"{StartValue} -> {EndValue} over {TotalDuration} seconds{(IsActive ? $" ({GetProgress()*100:0.0}%: {CurrentValue ?? "-"}){(IsPaused ? " [Paused]" : "")}" : "")}";
         }
 
         /// <summary>
