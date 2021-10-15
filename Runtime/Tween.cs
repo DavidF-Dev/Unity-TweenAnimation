@@ -386,10 +386,10 @@ namespace DavidFDev.Tweening
                 // Perform the tween
                 UpdateCurrentValue(GetTweenedValueAt(ElapsedTime / TotalDuration));
 
-                yield return null;
-
                 // Increment elapsed time
                 ElapsedTime += Time.deltaTime;
+
+                yield return null;
             }
 
             // Snap to the end value
