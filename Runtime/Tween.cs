@@ -29,6 +29,11 @@ namespace DavidFDev.Tweening
     {
         #region Static fields and constants
 
+        /// <summary>
+        ///     Package version.
+        /// </summary>
+        public static readonly Version Version = new Version(0, 1, 1);
+
         private static TweenMono _mono;
 
         #endregion
