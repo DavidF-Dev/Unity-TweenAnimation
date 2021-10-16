@@ -215,7 +215,7 @@ namespace DavidFDev.Tweening
         /// <param name="easeType"></param>
         /// <returns></returns>
         [Pure]
-        public static EasingFunction Get(EaseType easeType)
+        public static EasingFunction GetEasingFunction(this EaseType easeType)
         {
             switch (easeType)
             {
@@ -287,7 +287,7 @@ namespace DavidFDev.Tweening
         /// <param name="easingFunction"></param>
         /// <returns>Null if the easing function is not part of the built-in collection.</returns>
         [Pure]
-        public static EaseType? Get(EasingFunction easingFunction)
+        public static EaseType? GetEaseType(this EasingFunction easingFunction)
         {
             if (easingFunction == Linear)
             {
