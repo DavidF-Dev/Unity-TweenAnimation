@@ -437,6 +437,17 @@ namespace DavidFDev.Tweening
             return null;
         }
 
+        /// <summary>
+        ///     Flip the result of the provided easing function.
+        /// </summary>
+        /// <param name="easingFunction"></param>
+        /// <returns>Flipped easing function.</returns>
+        [Pure]
+        public static EasingFunction Flip(EasingFunction easingFunction)
+        {
+            return x => 1f - easingFunction(x);
+        }
+
         #endregion
     }
 
