@@ -47,7 +47,7 @@ public delegate float EasingFunction(float t);
 EasingFunction myEasingFunction = t => t * t;
 ```
 
-Furthermore, there is also an ``EaseType`` enum which can be used if you need to expose an easing function in the unity inspector. Use ``Ease.Get()`` to convert between enum value and easing function (and vice-versa!)
+Furthermore, there is also an ``EaseType`` enum which can be used if you need to expose an easing function in the unity inspector. Use ``Ease.GetEasingFunction()`` to convert between enum value and easing function.
 
 ### Controlling playback
 A tween instance contains properties and methods for querying & controlling playback:
