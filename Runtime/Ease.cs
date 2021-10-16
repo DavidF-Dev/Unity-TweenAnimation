@@ -438,12 +438,13 @@ namespace DavidFDev.Tweening
         }
 
         /// <summary>
-        ///     Flip the result of the provided easing function.
+        ///     Invert (flip) the result of the provided easing function.
+        ///     This is calculated as (1 - x) where x is the result of the original easing function.
         /// </summary>
         /// <param name="easingFunction"></param>
-        /// <returns>Flipped easing function.</returns>
+        /// <returns>Inverted easing function.</returns>
         [Pure]
-        public static EasingFunction Flip(EasingFunction easingFunction)
+        public static EasingFunction Invert(this EasingFunction easingFunction)
         {
             return x => 1f - easingFunction(x);
         }
