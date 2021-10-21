@@ -32,7 +32,7 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Package version.
         /// </summary>
-        public static readonly Version Version = new Version(0, 1, 1);
+        public static readonly Version Version = new Version(1, 0, 0);
 
         private static TweenMono _mono;
 
