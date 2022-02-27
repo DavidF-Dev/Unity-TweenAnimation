@@ -4,9 +4,9 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace DavidFDev.Tweening
@@ -19,7 +19,8 @@ namespace DavidFDev.Tweening
     /// <param name="b"></param>
     /// <param name="t">Progress (0.0 - 1.0).</param>
     /// <returns>Value between a and b.</returns>
-    public delegate T LerpFunction<T>(T a, T b, float t);
+    [NotNull]
+    public delegate T LerpFunction<T>([NotNull] T a, [NotNull] T b, float t);
 
     /// <summary>
     ///     Static Create() methods for constructing tween animation instances.
@@ -32,6 +33,7 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Package version.
         /// </summary>
+        [PublicAPI, NotNull]
         public static readonly Version Version = new Version(1, 0, 1);
 
         private static TweenMono _mono;
@@ -47,9 +49,10 @@ namespace DavidFDev.Tweening
         {
             // Create a game object that can be used to start coroutine(s) later
             _mono = new GameObject("Tween").AddComponent<TweenMono>();
-            _mono.gameObject.hideFlags = HideFlags.HideInHierarchy;
+            var monoObj = _mono.gameObject;
+            monoObj.hideFlags = HideFlags.HideInHierarchy;
             _mono.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
-            UnityEngine.Object.DontDestroyOnLoad(_mono.gameObject);
+            UnityEngine.Object.DontDestroyOnLoad(monoObj);
         }
 
         #endregion
@@ -57,9 +60,9 @@ namespace DavidFDev.Tweening
         #region Static methods
 
         /// <summary>
-        ///     Create a new tweening instance for a specified lerpable type.
+        ///     Create a new tweening instance for a specified lerping type.
         /// </summary>
-        /// <typeparam name="T">Lerpable type.</typeparam>
+        /// <typeparam name="T">Lerping type.</typeparam>
         /// <param name="start">Starting value (0%).</param>
         /// <param name="end">Destination value (100%).</param>
         /// <param name="duration">Time that the tweening animation should take (seconds).</param>
@@ -69,26 +72,20 @@ namespace DavidFDev.Tweening
         /// <param name="onUpdate">Invoked when the tweened value is updated, providing the current value.</param>
         /// <param name="onComplete">Invoked when the tween is completed.</param>
         /// <returns>Tweening instance that can be used to control playback.</returns>
-        public static Tween Create<T>(T start, T end, float duration, LerpFunction<T> lerpFunction, EasingFunction easingFunction = null, bool begin = true, Action<T> onUpdate = null, Action onComplete = null)
+        [PublicAPI, CanBeNull]
+        public static Tween Create<T>([NotNull] T start, [NotNull] T end, float duration, [NotNull] LerpFunction<T> lerpFunction, [CanBeNull] EasingFunction easingFunction = null, bool begin = true, [CanBeNull] Action<T> onUpdate = null, [CanBeNull] Action onComplete = null)
         {
             if (duration < 0f)
             {
-                throw new ArgumentException("Tween cannot have a negative duration", nameof(duration));
-            }
-
-            if (lerpFunction == null)
-            {
-                throw new ArgumentNullException(nameof(lerpFunction));
+                Debug.LogError("Failed to create tween: cannot have a negative duration.");
+                return null;
             }
 
             // Use a linear easing function if none is specified
-            if (easingFunction == null)
-            {
-                easingFunction = Ease.Linear;
-            }
+            easingFunction ??= Ease.Linear;
 
             // Initialise a new tween instance
-            Tween tween = new Tween
+            var tween = new Tween
             {
                 StartValue = start,
                 EndValue = end,
@@ -111,8 +108,11 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Create a new instance that tweens floats.
         /// </summary>
-        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween Create(float start, float end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<float> onUpdate = null, Action onComplete = null)
+        /// <inheritdoc>
+        ///     <cref>Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)</cref>
+        /// </inheritdoc>
+        [PublicAPI, CanBeNull]
+        public static Tween Create(float start, float end, float duration, [CanBeNull] EasingFunction easingFunction = null, bool begin = true, [CanBeNull] Action<float> onUpdate = null, [CanBeNull] Action onComplete = null)
         {
             return Create(start, end, duration, Mathf.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
@@ -120,8 +120,11 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Create a new instance that tweens doubles.
         /// </summary>
-        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween Create(double start, double end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<double> onUpdate = null, Action onComplete = null)
+        /// <inheritdoc>
+        ///     <cref>Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)</cref>
+        /// </inheritdoc>
+        [PublicAPI, CanBeNull]
+        public static Tween Create(double start, double end, float duration, [CanBeNull] EasingFunction easingFunction = null, bool begin = true, [CanBeNull] Action<double> onUpdate = null, [CanBeNull] Action onComplete = null)
         {
             return Create(start, end, duration, (a, b, t) => a + (b - a) * t, easingFunction, begin, onUpdate, onComplete);
         }
@@ -129,8 +132,11 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Create a new instance that tweens 2d vectors.
         /// </summary>
-        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween Create(Vector2 start, Vector2 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector2> onUpdate = null, Action onComplete = null)
+        /// <inheritdoc>
+        ///     <cref>Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)</cref>
+        /// </inheritdoc>
+        [PublicAPI, CanBeNull]
+        public static Tween Create(Vector2 start, Vector2 end, float duration, [CanBeNull] EasingFunction easingFunction = null, bool begin = true, [CanBeNull] Action<Vector2> onUpdate = null, [CanBeNull] Action onComplete = null)
         {
             return Create(start, end, duration, Vector2.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
@@ -138,8 +144,11 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Create a new instance that tweens 3d vectors.
         /// </summary>
-        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween Create(Vector3 start, Vector3 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector3> onUpdate = null, Action onComplete = null)
+        /// <inheritdoc>
+        ///     <cref>Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)</cref>
+        /// </inheritdoc>
+        [PublicAPI, CanBeNull]
+        public static Tween Create(Vector3 start, Vector3 end, float duration, [CanBeNull] EasingFunction easingFunction = null, bool begin = true, [CanBeNull] Action<Vector3> onUpdate = null, [CanBeNull] Action onComplete = null)
         {
             return Create(start, end, duration, Vector3.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
@@ -147,8 +156,11 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Create a new instance that tweens 4d vectors.
         /// </summary>
-        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween Create(Vector4 start, Vector4 end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Vector4> onUpdate = null, Action onComplete = null)
+        /// <inheritdoc>
+        ///     <cref>Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)</cref>
+        /// </inheritdoc>
+        [PublicAPI, CanBeNull]
+        public static Tween Create(Vector4 start, Vector4 end, float duration, [CanBeNull] EasingFunction easingFunction = null, bool begin = true, [CanBeNull] Action<Vector4> onUpdate = null, [CanBeNull] Action onComplete = null)
         {
             return Create(start, end, duration, Vector4.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
@@ -156,8 +168,11 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Create a new instance that tweens quaternions.
         /// </summary>
-        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween Create(Quaternion start, Quaternion end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Quaternion> onUpdate = null, Action onComplete = null)
+        /// <inheritdoc>
+        ///     <cref>Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)</cref>
+        /// </inheritdoc>
+        [PublicAPI, CanBeNull]
+        public static Tween Create(Quaternion start, Quaternion end, float duration, [CanBeNull] EasingFunction easingFunction = null, bool begin = true, [CanBeNull] Action<Quaternion> onUpdate = null, [CanBeNull] Action onComplete = null)
         {
             return Create(start, end, duration, Quaternion.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
@@ -165,8 +180,11 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Create a new instance that tweens colours.
         /// </summary>
-        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween Create(Color start, Color end, float duration, EasingFunction easingFunction = null, bool begin = true, Action<Color> onUpdate = null, Action onComplete = null)
+        /// <inheritdoc>
+        ///     <cref>Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)</cref>
+        /// </inheritdoc>
+        [PublicAPI, CanBeNull]
+        public static Tween Create(Color start, Color end, float duration, [CanBeNull] EasingFunction easingFunction = null, bool begin = true, [CanBeNull] Action<Color> onUpdate = null, [CanBeNull] Action onComplete = null)
         {
             return Create(start, end, duration, Color.LerpUnclamped, easingFunction, begin, onUpdate, onComplete);
         }
@@ -176,32 +194,34 @@ namespace DavidFDev.Tweening
         /// </summary>
         /// <param name="target">Reference to the target object that the property is declared on.</param>
         /// <param name="propertyName">Name of the property (recommend using nameof()).</param>
-        /// <inheritdoc cref="Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)"/>
-        public static Tween Create<T>(object target, string propertyName, T start, T end, float duration, LerpFunction<T> lerpFunction, EasingFunction easingFunction = null, bool begin = true, Action<T> onUpdate = null, Action onComplete = null)
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="duration"></param>
+        /// <param name="lerpFunction"></param>
+        /// <param name="easingFunction"></param>
+        /// <param name="begin"></param>
+        /// <param name="onUpdate"></param>
+        /// <param name="onComplete"></param>
+        /// <inheritdoc>
+        ///     <cref>Create{T}(T, T, float, LerpFunction{T}, EasingFunction, bool, Action{T}, Action)</cref>
+        /// </inheritdoc>
+        [PublicAPI, CanBeNull]
+        public static Tween Create<T>([NotNull] object target, [NotNull] string propertyName, [NotNull] T start, [NotNull] T end, float duration, [NotNull] LerpFunction<T> lerpFunction, [CanBeNull] EasingFunction easingFunction = null, bool begin = true, [CanBeNull] Action<T> onUpdate = null, [CanBeNull] Action onComplete = null)
         {
-            if (target == null)
-            {
-                throw new ArgumentNullException(nameof(target));
-            }
-
-            if (string.IsNullOrEmpty(propertyName))
-            {
-                throw new ArgumentNullException(nameof(propertyName));
-            }
-
             // Find the property on the target object by name
-            PropertyInfo property = target.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            var property = target.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
             // Check that the property is found
             if (property == null)
             {
-                throw new NullReferenceException($"Cannot find property ({propertyName}) on object ({target.GetType().Name}).");
+                Debug.LogError($"Failed to create tween: unable to find property \"{propertyName}\" on object \"{target.GetType().Name}\".");
+                return null;
             }
 
             // Ensure that the property type matches the provided generic type
-            if (typeof(T) != property.PropertyType)
+            if (property.PropertyType.IsAssignableFrom(typeof(T)))
             {
-                throw new InvalidCastException($"Cannot cast property type ({property.PropertyType.Name}) to tween type ({typeof(T).Name}).");
+                Debug.LogError($"Failed to create tween: unable to cast property type \"{property.PropertyType.Name}\" to tween type \"{typeof(T).Name}\".");
             }
 
             return Create(start, end, duration, lerpFunction, easingFunction, begin, x =>
@@ -215,18 +235,23 @@ namespace DavidFDev.Tweening
 
         #region Fields
 
-        private Coroutine _update = null;
+        private Coroutine _update;
 
-        private Action<object> _onUpdate = null;
+        private Action<object> _onUpdate;
 
-        private Action _onComplete = null;
+        private Action _onComplete;
 
         #endregion
 
         #region Constructors
 
-        internal Tween()
+        private Tween()
         {
+            StartValue = null!;
+            EndValue = null!;
+            LerpFunction = null!;
+            EasingFunction = null!;
+            UnderlyingType = null!;
         }
 
         #endregion
@@ -236,52 +261,62 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Whether the tween is actively being updated. Set via Start() and Stop().
         /// </summary>
-        public bool IsActive { get; private set; } = false;
+        [PublicAPI]
+        public bool IsActive { get; private set; }
 
         /// <summary>
         ///     Whether the tween animation is paused.
         /// </summary>
-        public bool IsPaused { get; set; } = false;
+        [PublicAPI]
+        public bool IsPaused { get; set; }
 
         /// <summary>
         ///     Starting value of the tween (0%).
         /// </summary>
-        public object StartValue { get; private set; } = null;
+        [PublicAPI, NotNull]
+        public object StartValue { get; private set; }
 
         /// <summary>
         ///     Destination value of the tween (100%).
         /// </summary>
-        public object EndValue { get; private set; } = null;
+        [PublicAPI, NotNull]
+        public object EndValue { get; private set; }
 
         /// <summary>
         ///     Current value of the tween.
         /// </summary>
-        public object CurrentValue { get; private set; } = null;
+        [PublicAPI, CanBeNull]
+        public object CurrentValue { get; private set; }
 
         /// <summary>
         ///     Time that the tween animation takes (seconds).
         /// </summary>
-        public float TotalDuration { get; private set; } = 0.0f;
+        [PublicAPI]
+        public float TotalDuration { get; private set; }
 
         /// <summary>
         ///     Elapsed time of the tween animation (0.0 - TotalDuration).
         /// </summary>
-        public float ElapsedTime { get; private set; } = 0.0f;
+        [PublicAPI]
+        public float ElapsedTime { get; private set; }
 
         /// <summary>
         ///     Lerp function being used by the tween animation.
         /// </summary>
-        public LerpFunction<object> LerpFunction { get; private set; } = null;
+        [PublicAPI, NotNull]
+        public LerpFunction<object> LerpFunction { get; private set; }
 
         /// <summary>
         ///     Easing function being used by the tween animation.
         /// </summary>
-        public EasingFunction EasingFunction { get; private set; } = null;
+        [PublicAPI, NotNull]
+        public EasingFunction EasingFunction { get; private set; }
 
         /// <summary>
         ///     Type of the value that is being tweened.
         /// </summary>
-        public Type UnderlyingType { get; private set; } = null;
+        [PublicAPI, NotNull]
+        public Type UnderlyingType { get; private set; }
 
         #endregion
 
@@ -291,6 +326,7 @@ namespace DavidFDev.Tweening
         ///     Begin or restart the tween.
         /// </summary>
         /// <param name="duration">Optionally change the tween's duration to a new value or, if null, remain the same.</param>
+        [PublicAPI]
         public void Start(float? duration = null)
         {
             if (IsActive)
@@ -303,7 +339,8 @@ namespace DavidFDev.Tweening
             {
                 if (duration.Value < 0f)
                 {
-                    throw new ArgumentException("Tween cannot have a negative duration", nameof(duration));
+                    Debug.LogError("Failed to start tween: duration cannot be negative.");
+                    return;
                 }
 
                 TotalDuration = duration.Value;
@@ -316,6 +353,7 @@ namespace DavidFDev.Tweening
         ///     End the tween prematurely.
         /// </summary>
         /// <param name="invokeOnComplete">Whether external completion logic should be invoked.</param>
+        [PublicAPI]
         public void Stop(bool invokeOnComplete = false)
         {
             if (!IsActive)
@@ -337,7 +375,7 @@ namespace DavidFDev.Tweening
         ///     Get the percentage of the tween's completion (0.0 - 1.0).
         /// </summary>
         /// <returns></returns>
-        [Pure]
+        [PublicAPI, Pure]
         public float GetProgress()
         {
             return ElapsedTime / TotalDuration;
@@ -350,14 +388,13 @@ namespace DavidFDev.Tweening
         /// </summary>
         /// <param name="progress">Progress between 0.0 and 1.0.</param>
         /// <returns></returns>
-        [Pure]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [PublicAPI, Pure, NotNull, MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object GetTweenedValueAt(float progress)
         {
             return LerpFunction(StartValue, EndValue, EasingFunction(progress));
         }
 
-        [Pure]
+        [PublicAPI, Pure]
         public override string ToString()
         {
             return $"{StartValue} to {EndValue} over {TotalDuration} seconds{(IsActive ? $" ({GetProgress()*100:0.0}%: {CurrentValue ?? "-"}){(IsPaused ? " [Paused]" : "")}" : "")}";
@@ -409,7 +446,7 @@ namespace DavidFDev.Tweening
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void UpdateCurrentValue(object value)
+        private void UpdateCurrentValue([NotNull] object value)
         {
             CurrentValue = value;
 
@@ -418,9 +455,9 @@ namespace DavidFDev.Tweening
             {
                 _onUpdate?.Invoke(CurrentValue);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.LogException(e);
+                Debug.LogWarning("Failed to update tween due to an exception. Stopping.");
                 Stop();
             }
         }
@@ -432,9 +469,9 @@ namespace DavidFDev.Tweening
             {
                 _onComplete?.Invoke();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.LogException(e);
+                Debug.LogWarning("Failed to complete tween due to an exception. Stopping.");
             }
         }
 

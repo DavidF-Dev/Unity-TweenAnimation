@@ -7,7 +7,8 @@
 // https://www.febucci.com/2018/08/easing-functions/
 // https://easings.net/
 
-using System.Diagnostics.Contracts;
+using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace DavidFDev.Tweening
@@ -30,111 +31,133 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Linearly reach the destination state.
         /// </summary>
+        [PublicAPI] 
         public static readonly EasingFunction Linear = t => t;
 
         /// <summary>
         ///     Ease in (^2).
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction QuadIn = t => t * t;
 
         /// <summary>
         ///     Ease out (^2).
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction QuadOut = t => 1 - (1 - t) * (1 - t);
 
         /// <summary>
         ///     Ease in and out (^2).
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction QuadInOut = t => t < 0.5f ? 2 * t * t : 1 - Mathf.Pow(-2 * t + 2, 2) / 2;
 
         /// <summary>
         ///     Ease in (^3).
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction CubicIn = t => t * t * t;
 
         /// <summary>
         ///     Ease out (^3).
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction CubicOut = t => 1 - Mathf.Pow(1 - t, 3);
 
         /// <summary>
         ///     Ease in and out (^3).
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction CubicInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Mathf.Pow(-2 * t + 2, 3) / 2;
 
         /// <summary>
         ///     Ease in (^4).
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction QuartIn = t => t * t * t * t;
 
         /// <summary>
         ///     Ease out (^4).
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction QuartOut = t => 1 - Mathf.Pow(1 - t, 4);
 
         /// <summary>
         ///     Ease in and out (^4).
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction QuartInOut = t => t < 0.5f ? 8 * t * t * t * t : 1 - Mathf.Pow(-2 * t + 2, 4) / 2;
 
         /// <summary>
         ///     Ease in using a sine wave.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction SineIn = t => 1 - Mathf.Cos((t * Mathf.PI) / 2);
 
         /// <summary>
         ///     Ease out using a sine wave.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction SineOut = t => Mathf.Sin((t * Mathf.PI) / 2);
 
         /// <summary>
         ///     Ease in and out using a sine wave.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction SineInOut = t => -(Mathf.Cos(Mathf.PI * t) - 1) / 2;
 
         /// <summary>
         ///     Ease in exponentially.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction ExpoIn = t => t == 0 ? 0 : Mathf.Pow(2, 10 * t - 10);
 
         /// <summary>
         ///     Ease out exponentially.
         /// </summary>
-        public static readonly EasingFunction ExpoOut = t => t == 1 ? 1 : 1 - Mathf.Pow(2, -10 * t);
+        [PublicAPI]
+        public static readonly EasingFunction ExpoOut = t => Math.Abs(t - 1) < Mathf.Epsilon ? 1 : 1 - Mathf.Pow(2, -10 * t);
 
         /// <summary>
         ///     Ease in and out exponentially.
         /// </summary>
-        public static readonly EasingFunction ExpoInOut = t => t == 0 ? 0 : t == 1 ? 1 : t < 0.5 ? Mathf.Pow(2, 20 * t - 10) / 2 : (2 - Mathf.Pow(2, -20 * t + 10)) / 2;
+        [PublicAPI]
+        public static readonly EasingFunction ExpoInOut = t => t == 0 ? 0 : Math.Abs(t - 1) < Mathf.Epsilon ? 1 : t < 0.5 ? Mathf.Pow(2, 20 * t - 10) / 2 : (2 - Mathf.Pow(2, -20 * t + 10)) / 2;
 
         /// <summary>
-        ///     Ease in cyclicly.
+        ///     Ease in cyclically.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction CircIn = t => 1 - Mathf.Sqrt(1 - Mathf.Pow(t, 2));
 
         /// <summary>
-        ///     Ease out cyclicly.
+        ///     Ease out cyclically.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction CircOut = t => Mathf.Sqrt(1 - Mathf.Pow(t - 1, 2));
 
         /// <summary>
-        ///     Ease in and out cyclicly.
+        ///     Ease in and out cyclically.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction CircInOut = t => t < 0.5f ? (1 - Mathf.Sqrt(1 - Mathf.Pow(2 * t, 2))) / 2 : (Mathf.Sqrt(1 - Mathf.Pow(-2 * t + 2, 2)) + 1) / 2;
 
         /// <summary>
         ///     In ease, slightly overshooting.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction BackIn = t => C3 * t * t * t - C1 * t * t;
 
         /// <summary>
         ///     Ease out, slightly overshooting.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction BackOut = t => 1 + C3 * Mathf.Pow(t - 1, 3) + C1 * Mathf.Pow(t - 1, 2);
 
         /// <summary>
         ///     Ease in and out, slightly overshooting.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction BackInOut = t => t < 0.5f
                 ? (Mathf.Pow(2 * t, 2) * ((C2 + 1) * 2 * t - C2)) / 2
                 : (Mathf.Pow(2 * t - 2, 2) * ((C2 + 1) * (t * 2 - 2) + C2) + 2) / 2;
@@ -142,19 +165,22 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Ease in elastically.
         /// </summary>
-        public static readonly EasingFunction ElasticIn = t => t == 0 ? 0 : t == 1 ? 1 : -Mathf.Pow(2, 10 * t - 10) * Mathf.Sin((t * 10 - 10.75f) * C4);
+        [PublicAPI]
+        public static readonly EasingFunction ElasticIn = t => t == 0 ? 0 : Math.Abs(t - 1) < Mathf.Epsilon ? 1 : -Mathf.Pow(2, 10 * t - 10) * Mathf.Sin((t * 10 - 10.75f) * C4);
 
         /// <summary>
         ///     Ease out elastically.
         /// </summary>
-        public static readonly EasingFunction ElasticOut = t => t == 0 ? 0 : t == 1 ? 1 : Mathf.Pow(2, -10 * t) * Mathf.Sin((t * 10 - 0.75f) * C4) + 1;
+        [PublicAPI]
+        public static readonly EasingFunction ElasticOut = t => t == 0 ? 0 : Math.Abs(t - 1) < Mathf.Epsilon ? 1 : Mathf.Pow(2, -10 * t) * Mathf.Sin((t * 10 - 0.75f) * C4) + 1;
 
         /// <summary>
         ///     Ease in and out elastically.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction ElasticInOut = t => t == 0
                 ? 0
-                : t == 1
+                : Math.Abs(t - 1) < Mathf.Epsilon
                 ? 1
                 : t < 0.5f
                 ? -(Mathf.Pow(2, 20 * t - 10) * Mathf.Sin((20 * t - 11.125f) * C5)) / 2
@@ -163,26 +189,28 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Ease in with a bounce.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction BounceIn = t => 1 - BounceOut(1 - t);
 
         /// <summary>
         ///     Ease out with a bounce.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction BounceOut = t =>
         {
             if (t < 1 / D1)
                 return N1 * t * t;
-            else if (t < 2 / D1)
+            if (t < 2 / D1)
                 return N1 * (t -= (1.5f / D1)) * t + 0.75f;
-            else if (t < 2.5 / D1)
+            if (t < 2.5 / D1)
                 return N1 * (t -= (2.25f / D1)) * t + 0.9375f;
-            else
-                return N1 * (t -= (2.625f / D1)) * t + 0.984375f;
+            return N1 * (t -= (2.625f / D1)) * t + 0.984375f;
         };
 
         /// <summary>
         ///     Ease in and out with a bounce.
         /// </summary>
+        [PublicAPI]
         public static readonly EasingFunction BounceInOut = t => t < 0.5f
                 ? BounceIn(t* 2) * 0.5f
                 : BackOut(t* 2 - 1) * 0.5f + 0.5f;
@@ -190,12 +218,8 @@ namespace DavidFDev.Tweening
         /// <summary>
         ///     Mirrored animation - reaches destination state then returns back to original state.
         /// </summary>
-        public static readonly EasingFunction Spike = t =>
-        {
-            if (t <= 0.5f)
-                return QuadIn(t / 0.5f);
-            return QuadIn((1 - t) / 0.5f);
-        };
+        [PublicAPI]
+        public static readonly EasingFunction Spike = t => t <= 0.5f ? QuadIn(t / 0.5f) : QuadIn((1 - t) / 0.5f);
 
         private const float C1 = 1.70158f;
         private const float C2 = C1 * 1.525f;
@@ -214,7 +238,7 @@ namespace DavidFDev.Tweening
         /// </summary>
         /// <param name="easeType"></param>
         /// <returns></returns>
-        [Pure]
+        [PublicAPI, Pure, NotNull]
         public static EasingFunction GetEasingFunction(this EaseType easeType)
         {
             switch (easeType)
@@ -286,7 +310,7 @@ namespace DavidFDev.Tweening
         /// </summary>
         /// <param name="easingFunction"></param>
         /// <returns>Null if the easing function is not part of the built-in collection.</returns>
-        [Pure]
+        [PublicAPI, Pure]
         public static EaseType? GetEaseType(this EasingFunction easingFunction)
         {
             if (easingFunction == Linear)
@@ -443,7 +467,7 @@ namespace DavidFDev.Tweening
         /// </summary>
         /// <param name="easingFunction"></param>
         /// <returns>Inverted easing function.</returns>
-        [Pure]
+        [PublicAPI, Pure, NotNull]
         public static EasingFunction Invert(this EasingFunction easingFunction)
         {
             return x => 1f - easingFunction(x);
@@ -539,17 +563,17 @@ namespace DavidFDev.Tweening
         ExpoInOut,
 
         /// <summary>
-        ///     Ease in cyclicly.
+        ///     Ease in cyclically.
         /// </summary>
         CircIn,
 
         /// <summary>
-        ///     Ease out cyclicly.
+        ///     Ease out cyclically.
         /// </summary>
         CircOut,
 
         /// <summary>
-        ///     Ease in and out cyclicly.
+        ///     Ease in and out cyclically.
         /// </summary>
         CircInOut,
 
