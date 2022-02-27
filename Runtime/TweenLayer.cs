@@ -23,6 +23,8 @@ namespace DavidFDev.Tweening
         [NotNull]
         private readonly HashSet<Tween> _tweens = new HashSet<Tween>();
 
+        private float _speed = 1f;
+
         #endregion
         
         #region Properties
@@ -32,6 +34,16 @@ namespace DavidFDev.Tweening
         /// </summary>
         [PublicAPI]
         public bool IsPaused { get; set; }
+
+        /// <summary>
+        ///     Playback speed (time factor) of all tween animations on this layer.
+        /// </summary>
+        [PublicAPI]
+        public float Speed
+        {
+            get => _speed;
+            set => _speed = Mathf.Max(0f, value);
+        }
         
         [PublicAPI]
         public int Count => _tweens.Count;

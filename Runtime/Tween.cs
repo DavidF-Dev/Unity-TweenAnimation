@@ -279,7 +279,7 @@ namespace DavidFDev.Tweening
         ///     Whether the tween animation is able to update. Affected by pausing and time scale.
         /// </summary>
         [PublicAPI]
-        public bool IsAbleToUpdate => !IsPaused && !Layer.IsPaused && (IsUnscaled || Time.timeScale > 0f);
+        public bool IsAbleToUpdate => !IsPaused && !Layer.IsPaused && Layer.Speed > 0f && (IsUnscaled || Time.timeScale > 0f);
         
         /// <summary>
         ///     Whether the tween animation should use Time.unscaledDeltaTime.
@@ -470,7 +470,7 @@ namespace DavidFDev.Tweening
                 yield return null;
 
                 // Increment elapsed time
-                ElapsedTime += IsUnscaled ? Mathf.Clamp(Time.unscaledDeltaTime, 0f, 0.2f) : Time.deltaTime;
+                ElapsedTime += (IsUnscaled ? Mathf.Clamp(Time.unscaledDeltaTime, 0f, 0.2f) : Time.deltaTime) * Layer.Speed;
             }
 
             // Snap to the end value
