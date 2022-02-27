@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -9,7 +9,7 @@ namespace DavidFDev.Tweening
     /// <summary>
     ///     Control all tweens in a layer at once.
     /// </summary>
-    public sealed class TweenLayer : IReadOnlyList<Tween>
+    public sealed class TweenLayer
     {
         #region Static fields
         
@@ -21,7 +21,7 @@ namespace DavidFDev.Tweening
         #region Fields
 
         [NotNull]
-        private readonly HashSet<Tween> _tweens = new HashSet<Tween>();
+        private readonly List<WeakReference<Tween>> _tweens = new List<WeakReference<Tween>>();
 
         private float _speed = 1f;
 
@@ -44,12 +44,8 @@ namespace DavidFDev.Tweening
             get => _speed;
             set => _speed = Mathf.Max(0f, value);
         }
-        
-        [PublicAPI]
-        public int Count => _tweens.Count;
-        
-        [PublicAPI, NotNull]
-        public Tween this[int index] => _tweens.ElementAt(index);
+
+        internal IEnumerable<WeakReference<Tween>> Tweens => _tweens;
 
         #endregion
 
@@ -62,8 +58,9 @@ namespace DavidFDev.Tweening
         [PublicAPI]
         public void StartAll(float? duration = null)
         {
-            foreach (var tween in _tweens)
+            foreach (var tweenRef in _tweens)
             {
+                if (!tweenRef.TryGetTarget(out var tween)) continue;
                 tween.Start(duration);
             }
         }
@@ -74,30 +71,26 @@ namespace DavidFDev.Tweening
         [PublicAPI]
         public void StopAll()
         {
-            foreach (var tween in _tweens)
+            foreach (var tweenRef in _tweens)
             {
+                if (!tweenRef.TryGetTarget(out var tween)) continue;
                 tween.Stop();
             }
         }
         
-        public IEnumerator<Tween> GetEnumerator()
-        {
-            return _tweens.GetEnumerator();
-        }
-        
         internal void AddToLayer([NotNull] Tween tween)
         {
-            _tweens.Add(tween);
+            _tweens.Add(new WeakReference<Tween>(tween));
         }
 
         internal void RemoveFromLayer([NotNull] Tween tween)
         {
-            _tweens.Remove(tween);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            for (var i = 0; i < _tweens.Count; i += 1)
+            {
+                if (!_tweens[i].TryGetTarget(out var target) || target != tween) continue;
+                _tweens.RemoveAt(i);
+                return;
+            }
         }
         
         #endregion
@@ -129,7 +122,7 @@ namespace DavidFDev.Tweening
         
         #region Properties
 
-        public override bool keepWaiting => Layer.Any(x => x.IsActive);
+        public override bool keepWaiting => Layer.Tweens.Any(x => x.TryGetTarget(out var t) && t.IsActive);
 
         #endregion
     }

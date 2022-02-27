@@ -259,6 +259,12 @@ namespace DavidFDev.Tweening
             _layer.AddToLayer(this);
         }
 
+        ~Tween()
+        {
+            _layer.RemoveFromLayer(this);
+            _layer = null!;
+        }
+
         #endregion
 
         #region Properties
