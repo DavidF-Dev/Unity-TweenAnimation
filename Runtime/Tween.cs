@@ -491,4 +491,37 @@ namespace DavidFDev.Tweening
 
         #endregion
     }
+    
+    #region Other types
+
+    /// <summary>
+    ///     Yield instruction that waits for a given tween instance to finish.
+    ///     Usage: yield return new WaitForTween(...)
+    /// </summary>
+    public sealed class WaitForTween : CustomYieldInstruction
+    {
+        #region Fields
+
+        [PublicAPI, CanBeNull]
+        public readonly Tween Tween;
+        
+        #endregion
+        
+        #region Constructors
+
+        public WaitForTween([CanBeNull] Tween tween)
+        {
+            Tween = tween;
+        }
+        
+        #endregion
+        
+        #region Properties
+
+        public override bool keepWaiting => Tween?.IsActive ?? false;
+
+        #endregion
+    }
+    
+    #endregion
 }

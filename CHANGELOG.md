@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Added option to tween using unscaled delta time.
+- Added WaitForTween custom yield instruction.
 - Added JetBrain annotations.
 - Replaced exceptions with Debug.Warning.
 
