@@ -269,6 +269,12 @@ namespace DavidFDev.Tweening
         /// </summary>
         [PublicAPI]
         public bool IsPaused { get; set; }
+        
+        /// <summary>
+        ///     Whether the tween animation should use Time.unscaledDeltaTime.
+        /// </summary>
+        [PublicAPI]
+        public bool IsUnscaled { get; set; }
 
         /// <summary>
         ///     Starting value of the tween (0%).
@@ -432,7 +438,7 @@ namespace DavidFDev.Tweening
                 yield return null;
 
                 // Increment elapsed time
-                ElapsedTime += Time.deltaTime;
+                ElapsedTime += IsUnscaled ? Mathf.Clamp(Time.unscaledDeltaTime, 0f, 0.2f) : Time.deltaTime;
             }
 
             // Snap to the end value
