@@ -241,6 +241,9 @@ namespace DavidFDev.Tweening
 
         private Action _onComplete;
 
+        [NotNull]
+        private TweenLayer _layer;
+
         #endregion
 
         #region Constructors
@@ -252,6 +255,8 @@ namespace DavidFDev.Tweening
             LerpFunction = null!;
             EasingFunction = null!;
             UnderlyingType = null!;
+            _layer = TweenLayer.Default;
+            _layer.AddToLayer(this);
         }
 
         #endregion
@@ -269,12 +274,39 @@ namespace DavidFDev.Tweening
         /// </summary>
         [PublicAPI]
         public bool IsPaused { get; set; }
+
+        /// <summary>
+        ///     Whether the tween animation is able to update. Affected by pausing and time scale.
+        /// </summary>
+        [PublicAPI]
+        public bool IsAbleToUpdate => !IsPaused && !Layer.IsPaused && (IsUnscaled || Time.timeScale > 0f);
         
         /// <summary>
         ///     Whether the tween animation should use Time.unscaledDeltaTime.
         /// </summary>
         [PublicAPI]
         public bool IsUnscaled { get; set; }
+
+        /// <summary>
+        ///     Controlling layer that the tween is a part of.
+        /// </summary>
+        [PublicAPI, NotNull]
+        public TweenLayer Layer
+        {
+            get => _layer;
+            set
+            {
+                if (value == _layer)
+                {
+                    Debug.LogError("Failed to set tween layer: already on the specified layer.");
+                    return;
+                }
+
+                _layer.RemoveFromLayer(this);
+                _layer = value;
+                _layer.AddToLayer(this);
+            }
+        }
 
         /// <summary>
         ///     Starting value of the tween (0%).
@@ -403,7 +435,7 @@ namespace DavidFDev.Tweening
         [PublicAPI, Pure]
         public override string ToString()
         {
-            return $"{StartValue} to {EndValue} over {TotalDuration} seconds{(IsActive ? $" ({GetProgress()*100:0.0}%: {CurrentValue ?? "-"}){(IsPaused ? " [Paused]" : "")}" : "")}";
+            return $"{StartValue} to {EndValue} over {TotalDuration} seconds{(IsActive ? $" ({GetProgress()*100:0.0}%: {CurrentValue ?? "-"}){(!IsAbleToUpdate ? " [Paused]" : "")}" : "")}";
         }
 
         /// <summary>
@@ -426,8 +458,8 @@ namespace DavidFDev.Tweening
             // Begin loop
             while (ElapsedTime <= TotalDuration)
             {
-                // Pause if paused (duh!)
-                while (IsPaused)
+                // Pause if unable to update
+                while (!IsAbleToUpdate)
                 {
                     yield return null;
                 }
