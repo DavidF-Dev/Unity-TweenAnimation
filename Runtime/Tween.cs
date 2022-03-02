@@ -30,12 +30,6 @@ namespace DavidFDev.Tweening
     {
         #region Static fields and constants
 
-        /// <summary>
-        ///     Package version.
-        /// </summary>
-        [PublicAPI, NotNull]
-        public static readonly Version Version = new Version(1, 0, 1);
-
         private static TweenMono _mono;
 
         #endregion
@@ -235,10 +229,13 @@ namespace DavidFDev.Tweening
 
         #region Fields
 
+        [CanBeNull]
         private Coroutine _update;
 
+        [CanBeNull]
         private Action<object> _onUpdate;
 
+        [CanBeNull]
         private Action _onComplete;
 
         [NotNull]
@@ -304,7 +301,6 @@ namespace DavidFDev.Tweening
             {
                 if (value == _layer)
                 {
-                    Debug.LogError("Failed to set tween layer: already on the specified layer.");
                     return;
                 }
 
@@ -419,7 +415,7 @@ namespace DavidFDev.Tweening
         ///     Get the percentage of the tween's completion (0.0 - 1.0).
         /// </summary>
         /// <returns></returns>
-        [PublicAPI, Pure]
+        [PublicAPI, Pure, MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float GetProgress()
         {
             return ElapsedTime / TotalDuration;
@@ -471,7 +467,7 @@ namespace DavidFDev.Tweening
                 }
 
                 // Perform the tween
-                UpdateCurrentValue(GetTweenedValueAt(ElapsedTime / TotalDuration));
+                UpdateCurrentValue(GetTweenedValueAt(GetProgress()));
 
                 yield return null;
 
