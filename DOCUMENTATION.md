@@ -8,16 +8,15 @@ The tweening manager will set itself up automatically in the background, so no a
 ### Creating a tweening animation
 The method signature for creating a new tweening animation is as follows:</br>
 ```cs
-Tween.Create(start, end, duration, easingFunction, begin, onUpdate, onComplete) : Tween
+Tween.Create(start, end, duration, easingFunction) : Tween<T>
 ```
 - ``start``: the initial value of the animation (A).
 - ``end``: the destination value of the animation (B).
 - ``duration``: the total time that the animation will take, in seconds (t).
 - ``easingFunction``: the easing function to use - usually one of the built-in options (see below for more details).
-- ``begin``: a boolean for whether the tweening animation should start playing straight away (otherwise it will need to be started manually).
-- ``onUpdate``: a callback that is invoked when the tweening animation updates itself. The callback provides the current tweened value.
-- ``onComplete``: a callback that is invoked when the tweening animation finishes playing.
-- Returns a ``Tween`` instance that can be used to control playback.
+- Returns a ``Tween<T>`` instance that can be used to control playback.
+
+Returned ``Tween<T>`` can be cast to ``ITween`` if preferred.
 
 ### Easing functions
 Easing functions specify the rate of change of the tweened value over time. I have included various built-in easing functions that can be accessed through the ``Ease`` static class. For example: ``Ease.SineIn``, ``Ease.Linear``, ``Ease.ExpoInOut``, etc.</br>
@@ -42,55 +41,35 @@ There are other properties and methods which you can see when viewing the code.
 
 ### Examples
 ```cs
-Tween.Create(
-  start: 0f,
-  end: 10f,
-  duration: 5f,
-  easingFunction: Ease.SineInOut, 
-  begin: true, 
-  onUpdate: x => Debug.Log(x), 
-  onComplete: () => Debug.Log("Finished!"));
+var tween = Tween.Create(start: 0f, end: 10f, duration: 5f, easingFunction: Ease.SineInOut);
+tween.Updated += value => Debug.Log(value);
+tween.Finished += () => Debug.Log("Finished!");
+tween.Start();
 ```
 This call will begin tweening (A = 0) to (B = 10) over (t = 5) seconds using a sine easing function. At each step, the current value will be displayed to the unity console.
 </br></br>
 ```cs
-Tween tween = Tween.Create(
-  start: Vector2.zero,
-  end: Vector2.one * 5f,
-  duration: 2.5f,
-  easingFunction: Ease.ElasticOut,
-  begin: false,
-  onUpdate: x => transform.position = x,
-  onComplete: null);
-
+var tween = Tween.Create(start: Vector2.zero, end: Vector2.one * 5f, duration: 2.5f, easingFunction: Ease.ElasticOut);
+tween.Updated += value => transform.position = value;
 tween.Start();
 ```
-This call will create a dormant tween set to animate from (A = (0,0)) to (B = (5, 5)) over (t = 2.5) seconds using an elastic easing function. At each step, the game object's transform will be updated to the current value (moving the game object). However, because ``begin`` is false, the tween will not start playing until ``Start()`` is called.
+This call will create a tween set to animate from (A = (0,0)) to (B = (5, 5)) over (t = 2.5) seconds using an elastic easing function. At each step, the game object's transform will be updated to the current value (moving the game object).
 </br></br>
 ```cs
-transform.TweenX(
-  start: transform.position.x,
-  end: transform.position.x + 10f,
-  duration: 4f);
+transform.TweenX(start: transform.position.x, end: transform.position.x + 10f, duration: 4f, easingFunction: null).Start();
 ```
-This call uses one of the built-in extension methods that tween's an object's x position 10 units to the right over (t = 4) seconds. The remainder of the arguments are omitted as they are using default values. This means the easing function will default to ``Ease.Linear``.
+This call uses one of the built-in extension methods that tween's an object's x position 10 units to the right over (t = 4) seconds. Passing an unassigned easing function will default to ``Ease.Linear``.
 </br></br>
 ```cs
-SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-Tween.Create<Color>(
-  start: Color.white,
-  end: Color.green,
-  duration: 2f,
-  lerpFunction: Color.LerpUnclamped,
-  easingFunction: Ease.Spike,
-  begin: true,
-  onUpdate: x => renderer.color = x,
-  onComplete: () => renderer.enabled = false);
+var renderer = GetComponent<SpriteRenderer>();
+var tween = Tween.Create(start: Color.white, end: Color.green, duration: 2f, lerpFunction: Color.LerpUnclamped, easingFunction: Ease.Spike);
+tween.Updated = value => renderer.color = value;
+tween.Start();
 ```
-This example shows how to create a generic tweening animation (note that this example is arbitrary as there is already a built-in overload for colours). The method signature is almost identical to the previous examples, however there is a new required parameter: ``lerpFunction``. This of the delegate type, ``LerpFunction`` - and allows you to create custom lerpable tweening types.
+This example shows how to create a generic tweening animation (note that this example is arbitrary as there is already a built-in overload for colours). The method signature is almost identical to the previous examples, however there is a new required parameter: ``lerpFunction``. This of the delegate type, ``LerpFunction`` - and allows you to create custom lerp-able tweening types.
 </br></br>
 ```cs
-Light light = GetComponent<Light>();
+var light = GetComponent<Light>();
 Tween.Create<float>(
   target: light,
   propertyName: nameof(light.intensity),
@@ -98,6 +77,6 @@ Tween.Create<float>(
   end: 0f,
   duration: 10f,
   lerpFunction: Mathf.LerpUnclamped,
-  easingFunction: Ease.CubicInOut);
+  easingFunction: Ease.CubicInOut).Start();
 ```
 This call uses an advanced overload for tweening a property on an object reference. The ``target`` parameter is an object reference and ``propertyName`` is the name of a declared property on the target type. This example will begin tweening a light's intensity from (A = 1) to (B = 0) over (t = 10) seconds using a cubic easing function (note that an equivalent extension method already exists: ``light.TweenIntensity()``.)

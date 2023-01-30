@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2023-01-30
+- Changed Tween instances to be generic.
+- Changed API significantly.
+- Removed Jetbrains annotations.
+
 ## [1.0.2] - 2022-02-27
 - Added tween layers for controlling multiple tweens at a time.
 - Added option to tween using unscaled delta time.

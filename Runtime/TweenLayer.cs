@@ -1,7 +1,8 @@
-﻿using System;
+﻿// File: TweenLayer.cs
+// Created by: DavidFDev
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace DavidFDev.Tweening
@@ -11,41 +12,46 @@ namespace DavidFDev.Tweening
     /// </summary>
     public sealed class TweenLayer
     {
-        #region Static fields
-        
-        [PublicAPI, NotNull]
+        #region Static Fields and Constants
+
         public static readonly TweenLayer Default = new TweenLayer();
-        
+
         #endregion
-        
+
         #region Fields
 
-        [NotNull]
-        private readonly List<WeakReference<Tween>> _tweens = new List<WeakReference<Tween>>();
-
-        private float _speed = 1f;
+        private readonly List<WeakReference<ITween>> _tweens;
+        private float _speed;
 
         #endregion
-        
+
+        #region Constructors
+
+        public TweenLayer()
+        {
+            _tweens = new List<WeakReference<ITween>>();
+            _speed = 1f;
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
-        ///     Whether all tween animations are paused on this layer.
+        ///     All tween animations are paused on this layer.
         /// </summary>
-        [PublicAPI]
         public bool IsPaused { get; set; }
 
         /// <summary>
         ///     Playback speed (time factor) of all tween animations on this layer.
         /// </summary>
-        [PublicAPI]
         public float Speed
         {
             get => _speed;
             set => _speed = Mathf.Max(0f, value);
         }
 
-        internal IEnumerable<WeakReference<Tween>> Tweens => _tweens;
+        internal IEnumerable<WeakReference<ITween>> Tweens => _tweens;
 
         #endregion
 
@@ -55,77 +61,54 @@ namespace DavidFDev.Tweening
         ///     Start all tweens on this layer.
         /// </summary>
         /// <param name="duration">Optionally change the tween's duration to a new value or, if null, remain the same.</param>
-        [PublicAPI]
         public void StartAll(float? duration = null)
         {
             foreach (var tweenRef in _tweens)
             {
-                if (!tweenRef.TryGetTarget(out var tween)) continue;
+                if (!tweenRef.TryGetTarget(out var tween))
+                {
+                    continue;
+                }
+
                 tween.Start(duration);
             }
         }
-        
+
         /// <summary>
         ///     Stop all tweens on this layer.
         /// </summary>
-        [PublicAPI]
-        public void StopAll()
+        public void StopAll(bool invokeOnComplete = false)
         {
             foreach (var tweenRef in _tweens)
             {
-                if (!tweenRef.TryGetTarget(out var tween)) continue;
-                tween.Stop();
+                if (!tweenRef.TryGetTarget(out var tween))
+                {
+                    continue;
+                }
+
+                tween.Stop(invokeOnComplete);
             }
         }
-        
-        internal void AddToLayer([NotNull] Tween tween)
+
+        internal void AddToLayer(ITween tween)
         {
-            _tweens.Add(new WeakReference<Tween>(tween));
+            _tweens.Add(new WeakReference<ITween>(tween));
         }
 
-        internal void RemoveFromLayer([NotNull] Tween tween)
+        internal void RemoveFromLayer(ITween tween)
         {
             for (var i = 0; i < _tweens.Count; i += 1)
             {
-                if (!_tweens[i].TryGetTarget(out var target) || target != tween) continue;
+                if (!_tweens[i].TryGetTarget(out var target) || target != tween)
+                {
+                    continue;
+                }
+
                 _tweens.RemoveAt(i);
                 return;
             }
         }
-        
-        #endregion
-    }
-    
-    #region Other types
-
-    /// <summary>
-    ///     Yield instruction that waits for all tweens in a layer to finish.
-    ///     Usage: yield return new WaitForTweenLayer(...)
-    /// </summary>
-    public sealed class WaitForTweenLayer : CustomYieldInstruction
-    {
-        #region Fields
-
-        [PublicAPI, NotNull]
-        public readonly TweenLayer Layer;
-        
-        #endregion
-        
-        #region Constructors
-
-        public WaitForTweenLayer([NotNull] TweenLayer layer)
-        {
-            Layer = layer;
-        }
-        
-        #endregion
-        
-        #region Properties
-
-        public override bool keepWaiting => Layer.Tweens.Any(x => x.TryGetTarget(out var t) && t.IsActive);
 
         #endregion
     }
-    
-    #endregion
 }
