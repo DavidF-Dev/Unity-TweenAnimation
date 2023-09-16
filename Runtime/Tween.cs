@@ -115,9 +115,9 @@ namespace DavidFDev.Tweening
 
         object ITween.StartValue => StartValue;
 
-        object ITween.EndValue => StartValue;
+        object ITween.EndValue => EndValue;
 
-        object ITween.CurrentValue => StartValue;
+        object ITween.CurrentValue => CurrentValue;
 
         /// <summary>
         ///     Tween animation is able to update. Affected by pausing and time scale.
